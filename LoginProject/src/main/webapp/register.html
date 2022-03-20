@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎注册</title>
+    <link href="css/register.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="form-div">
+    <div class="reg-content">
+        <h1>欢迎注册</h1>
+        <span>已有帐号？</span> <a href="login.html">登录</a>
+    </div>
+    <form id="reg-form" action="/LoginProject_war/register" method="post">
+
+        <table>
+
+            <tr>
+                <td>用户名</td>
+                <td class="inputs">
+                    <input name="username" type="text" id="username">
+                    <br>
+                    <span id="username_err" class="err_msg" style="display: none">用户名不太受欢迎</span>
+                </td>
+
+            </tr>
+
+            <tr>
+                <td>密码</td>
+                <td class="inputs">
+                    <input name="password" type="password" id="password">
+                    <br>
+                    <span id="password_err" class="err_msg" style="display: none">密码格式有误</span>
+                </td>
+            </tr>
+
+        </table>
+
+        <div class="buttons">
+            <input value="注 册" type="submit" id="reg_btn">
+        </div>
+        <br class="clear">
+    </form>
+
+</div>
+
+<script>
+
+    //1验证用户名是否符合规则
+    var usernameInput = document.getElementById("username");
+    //绑定onblur事件，失去焦点
+    usernameInput.onblur = username;
+    function username() {
+
+        var name = /^\w{6,12}$/;
+        var username = usernameInput.value.trim();
+
+        if (name.test(username)) {
+            document.getElementById("username_err").style.display = 'none';
+        } else {
+            document.getElementById("username_err").style.display = '';
+        }
+        return name.test(username);
+
+    }
+
+
+    var passwordInput = document.getElementById("password");
+    //绑定onblur事件，失去焦点
+    passwordInput.onblur = password;
+    function password(){
+
+        var pwd = /^\w{6,12}$/;
+        var password = passwordInput.value.trim();
+
+        if(pwd.test(password)){
+            document.getElementById("password_err").style.display = 'none';
+        }else {
+            document.getElementById("password_err").style.display = '';
+        }
+
+        return pwd.test(password);
+    }
+
+
+//获取表单对象
+    var regfrom = document.getElementById("reg-form");
+    regfrom.onsubmit = function (){
+
+        if(username() && password()){
+            return true;
+        }else {
+            return false;
+        }
+
+    }
+
+
+</script>
+</body>
+</html>
