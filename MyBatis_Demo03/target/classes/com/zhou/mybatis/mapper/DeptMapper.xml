@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhou.mybatis.mapper.DeptMapper">
+
+    <resultMap id="MapByDeptStep" type="Dept">
+        <id property="id" column="id"/>
+        <result property="deptName" column="dname"/>
+        <result property="loc" column="loc"/>
+    </resultMap>
+    <!--Dept getEmpAndDeptByStep(Integer id);-->
+    <select id="getEmpAndDeptByStep" resultMap="MapByDeptStep">
+        select * from dept where id = ${id}
+    </select>
+
+    <resultMap id="MapByCollection" type="Dept">
+        <id property="id" column="id"/>
+        <result property="deptName" column="dname"/>
+        <result property="loc" column="loc"/>
+        <collection property="emps" ofType="Emp">
+            <id property="id" column="emp_id"/>
+            <result property="empName" column="ename"/>
+            <result property="jobId" column="job_id"/>
+            <result property="mgr" column="mgr"/>
+            <result property="joinDate" column="joindate"/>
+            <result property="salary" column="salary"/>
+            <result property="bonus" column="bonus"/>
+        </collection>
+    </resultMap>
+    <!--List<Dept> getDeptAndEmpByCollection(Integer id);-->
+    <select id="getDeptAndEmpByCollection" resultMap="MapByCollection">
+        select * from dept left join emp e on dept.id = e.dept_id where dept.id = #{id}
+    </select>
+
+    <!--List<Dept> getEmpAndDeptByStepTwo(Integer id);-->
+    <resultMap id="MapByStepTwo" type="Dept">
+        <id property="id" column="id"/>
+        <result property="deptName" column="dname"/>
+        <result property="loc" column="loc"/>
+        <association property="emps" select="com.zhou.mybatis.mapper.EmpMapper.selectByDeptId" column="id" fetchType="lazy"/>
+    </resultMap>
+    <select id="getEmpAndDeptByStepTwo" resultMap="MapByStepTwo">
+        select * from dept where id = ${id}
+    </select>
+
+
+    <!--List<Map<String, Object>> getEmpByCondition(Integer id, String deptName, String loc);-->
+    <select id="getDeptByCondition" resultType="map">
+        select * from dept left join emp e on dept.id = e.dept_id
+        <where>
+            <if test="id != null and id != ''">
+               and id = #{id}
+            </if>
+            <if test="deptName != null and deptName != ''">
+               and dname = #{deptName}
+            </if>
+            <if test="loc != null and loc != ''">
+               and loc = #{loc}
+            </if>
+        </where>
+    </select>
+
+    <sql id="deptColumns">id, dname, loc</sql>
+    <!--List<Map<String, Object>> getDeptByTrim(@Param("dept") Dept dept);-->
+    <select id="getDeptByTrim" resultType="map">
+        select <include refid="deptColumns"/> from dept
+        <trim prefix="where" suffixOverrides="or|and">
+            <if test="dept.id != null and dept.id != ''">
+                id = #{dept.id} and
+            </if>
+            <if test="dept.deptName != null and dept.deptName != ''">
+                dname = #{dept.deptName} or
+            </if>
+            <if test="dept.loc != null and dept.loc != ''">
+                loc = #{dept.loc}
+            </if>
+        </trim>
+    </select>
+
+</mapper>
